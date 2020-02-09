@@ -1,7 +1,9 @@
 const express = require('express');
 const mysql = require('mysql');
-const getUserInfo = require('./endpoints/getUserInfo');
+const cors = require('cors');
 const app = express();
+
+
 
 
 const db = mysql.createConnection({
@@ -24,7 +26,7 @@ db.connect((err) => {
 
 })
 
-
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -32,7 +34,7 @@ app.get('/', (req, res) => {
     res.json({hello: "hi"});
 });
 
-app.get('/userInfo', getUserInfo);
+
 app.get('/addUserInfo', (req, res) => {
 
         let post = {firstname:'John', lastname:'Smith'};
@@ -71,7 +73,7 @@ app.get('/addUserInfo', (req, res) => {
 
             if(err) throw err;
             console.log(result);
-            res.send('Single User fetched...');
+            res.json(result);
             res.status(200);
         });
     
