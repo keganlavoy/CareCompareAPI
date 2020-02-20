@@ -96,7 +96,33 @@ app.get('/addUserInfo', (req, res) => {
 
 
 
+    app.post('/addUser/:userName/:password', (req, res) => {
 
+        let sql = `INSERT INTO users (userName, password) VALUES ('${req.params.userName}', '${req.params.password}');`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+    
+    app.get('/login/:userName/:password', (req, res) => {
+
+        let sql = `SELECT user_id FROM users WHERE userName = '${req.params.userName}' AND password = '${req.params.password}';`;
+        let query = db.query(sql, (err, result) =>{
+    
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    });
+        
 
 
 app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
