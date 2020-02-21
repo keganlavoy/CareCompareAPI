@@ -111,9 +111,9 @@ app.get('/addUserInfo', (req, res) => {
 
 
     
-    app.get('/login/:userName/:password', (req, res) => {
+    app.post('/login/:userName/:password', (req, res) => {
 
-        let sql = `SELECT user_id FROM users WHERE userName = '${req.params.userName}' AND password = '${req.params.password}';`;
+        let sql = `SELECT user_id FROM users WHERE userName='${req.params.userName}' AND password='${req.params.password}';`;
         let query = db.query(sql, (err, result) =>{
     
             if(err) throw err;
