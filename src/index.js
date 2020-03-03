@@ -80,15 +80,14 @@ app.get('/addUserInfo', (req, res) => {
     });
 
 
-    app.get('/updateUser/:user_id', (req, res) => {
+    app.post('/updateUser/:user_id/:firstName/:lastName/:DOBmonth/:DOBday/:DOByear/:gender/:homeAddress/:city/:province/:postalCode/:email/:phoneNum/:maritalStatus/:children', (req, res) => {
 
-        let city = 'Saskatoon';
-        let sql = `UPDATE users SET city = '${city}' WHERE user_id = ${req.params.user_id}`;
+        let sql = `UPDATE users SET firstName = '${req.params.firstName}', lastName = '${req.params.lastName}', DOBmonth = ${req.params.DOBmonth}, DOBday = ${req.params.DOBday}, DOByear = ${req.params.DOByear}, gender = '${req.params.gender}', homeAddress = '${req.params.homeAddress}', city = '${req.params.city}', province = '${req.params.province}', postalCode = '${req.params.postalCode}', email = '${req.params.email}', phoneNum = '${req.params.phoneNum}', maritalStatus = '${req.params.maritalStatus}', children = ${req.params.children} WHERE user_id = ${req.params.user_id};`;
         let query = db.query(sql, (err, result) =>{
 
             if(err) throw err;
             console.log(result);
-            res.send('Single User updated...');
+            res.json(result);
             res.status(200);
         });
     
@@ -123,6 +122,22 @@ app.get('/addUserInfo', (req, res) => {
         });
     });
         
+
+    app.post('/addBlogPost/:user_id/:postTitle/:postBody', (req, res) => {
+
+        let sql = `INSERT INTO forumposts (post_title, post_body, post_likes, post_dislikes, post_replies, user_id) VALUES ('${req.params.postTitle}', '${req.params.postBody}', 0, 0, 0, ${req.params.user_id});`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+
 
 
 app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
