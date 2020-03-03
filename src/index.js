@@ -123,9 +123,9 @@ app.get('/addUserInfo', (req, res) => {
     });
         
 
-    app.post('/addBlogPost/:user_id/:postTitle/:postBody', (req, res) => {
+    app.post('/addBlogPost/:user_id/:postTitle/:postBody/:username', (req, res) => {
 
-        let sql = `INSERT INTO forumposts (post_title, post_body, post_likes, post_dislikes, post_replies, user_id) VALUES ('${req.params.postTitle}', '${req.params.postBody}', 0, 0, 0, ${req.params.user_id});`;
+        let sql = `INSERT INTO forumposts (post_title, post_body, post_likes, post_dislikes, post_replies, user_id, username) VALUES ('${req.params.postTitle}', '${req.params.postBody}', 0, 0, 0, ${req.params.user_id}, '${req.params.username}');`;
         let query = db.query(sql, (err, result) =>{
 
             if(err) throw err;
@@ -138,6 +138,35 @@ app.get('/addUserInfo', (req, res) => {
 
 
 
+    app.get('/getUsername/:user_id', (req, res) => {
+
+        
+        let sql = `SELECT userName FROM users WHERE user_id = ${req.params.user_id}`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+
+
+    app.get('/getBlogPosts', (req, res) => {
+
+        
+        let sql = `SELECT * FROM forumposts`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
 
 
 app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
