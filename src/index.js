@@ -168,5 +168,110 @@ app.get('/addUserInfo', (req, res) => {
     
     });
 
+    app.get('/getInsurers', (req, res) => {
+
+        
+        let sql = `SELECT * FROM insurers`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+    app.get('/checkLike/:post_id/:user_id', (req, res) => {
+
+        
+        let sql = `SELECT * FROM forum_likes WHERE post_id = ${req.params.post_id} AND user_id = ${req.params.user_id}`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+
+    app.post('/addLike/:post_id/:user_id', (req, res) => {
+
+        let sql = `INSERT INTO forum_likes (post_id, user_id) VALUES (${req.params.post_id}, ${req.params.user_id});`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+    app.post('/updateLike/:post_id/:likes', (req, res) => {
+
+        let sql = `UPDATE forumposts SET post_likes = ${req.params.likes} WHERE post_id = ${req.params.post_id};`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+
+
+
+    app.get('/checkDislike/:post_id/:user_id', (req, res) => {
+
+        
+        let sql = `SELECT * FROM forum_dislikes WHERE post_id = ${req.params.post_id} AND user_id = ${req.params.user_id}`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+
+    app.post('/addDislike/:post_id/:user_id', (req, res) => {
+
+        let sql = `INSERT INTO forum_dislikes (post_id, user_id) VALUES (${req.params.post_id}, ${req.params.user_id});`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+    app.post('/updateDislike/:post_id/:dislikes', (req, res) => {
+
+        let sql = `UPDATE forumposts SET post_dislikes = ${req.params.dislikes} WHERE post_id = ${req.params.post_id};`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+
+
 
 app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
