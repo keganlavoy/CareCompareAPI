@@ -35,40 +35,14 @@ app.get('/', (req, res) => {
 });
 
 
-app.get('/addUserInfo', (req, res) => {
 
-        let post = {firstname:'John', lastname:'Smith'};
-        let sql = 'INSERT INTO users SET ?';
-        let query = db.query(sql, post, (err, result) =>{
-
-            if(err) throw err;
-            console.log(result);
-            res.send('Insert John...');
-            res.status(200);
-        });
-    
-    });
-
-    app.get('/getUserInfo', (req, res) => {
-
-        
-        let sql = 'SELECT * FROM users';
-        let query = db.query(sql, (err, results) =>{
-
-            if(err) throw err;
-            console.log(results);
-            res.send('Users fetched...');
-            res.status(200);
-        });
-    
-    });
 
 
 
     app.get('/getSingleUser/:user_id', (req, res) => {
 
         
-        let sql = `SELECT * FROM users WHERE user_id = ${req.params.user_id}`;
+        let sql = `SELECT * FROM users WHERE user_id = ` + mysql.escape(`${req.params.user_id}`);
         let query = db.query(sql, (err, result) =>{
 
             if(err) throw err;
@@ -82,7 +56,11 @@ app.get('/addUserInfo', (req, res) => {
 
     app.post('/updateUser/:user_id/:firstName/:lastName/:DOBmonth/:DOBday/:DOByear/:gender/:homeAddress/:city/:province/:postalCode/:email/:phoneNum/:maritalStatus/:children', (req, res) => {
 
-        let sql = `UPDATE users SET firstName = '${req.params.firstName}', lastName = '${req.params.lastName}', DOBmonth = ${req.params.DOBmonth}, DOBday = ${req.params.DOBday}, DOByear = ${req.params.DOByear}, gender = '${req.params.gender}', homeAddress = '${req.params.homeAddress}', city = '${req.params.city}', province = '${req.params.province}', postalCode = '${req.params.postalCode}', email = '${req.params.email}', phoneNum = '${req.params.phoneNum}', maritalStatus = '${req.params.maritalStatus}', children = ${req.params.children} WHERE user_id = ${req.params.user_id};`;
+        let sql = `UPDATE users SET firstName = ` + mysql.escape(`${req.params.firstName}`) + `, lastName = ` + mysql.escape(`${req.params.lastName}`) + `, DOBmonth = ` + mysql.escape(`${req.params.DOBmonth}`) + 
+        `, DOBday = ` + mysql.escape(`${req.params.DOBday}`) + `, DOByear = ` + mysql.escape(`${req.params.DOByear}`) + `, gender = ` + mysql.escape(`${req.params.gender}`) + `, homeAddress = `
+        + mysql.escape(`${req.params.homeAddress}`) + `, city = ` + mysql.escape(`${req.params.city}`) + `, province = ` + mysql.escape(`${req.params.province}`) + `, postalCode = `
+        + mysql.escape(`${req.params.postalCode}`) + `, email = ` + mysql.escape(`${req.params.email}`) + `, phoneNum = ` + mysql.escape(`${req.params.phoneNum}`) + `, maritalStatus = `
+        + mysql.escape(`${req.params.maritalStatus}`) + `, children = ` + mysql.escape(`${req.params.children}`) + ` WHERE user_id = ${req.params.user_id};`;
         let query = db.query(sql, (err, result) =>{
 
             if(err) throw err;
@@ -97,7 +75,7 @@ app.get('/addUserInfo', (req, res) => {
 
     app.post('/addUser/:userName/:password', (req, res) => {
 
-        let sql = `INSERT INTO users (userName, password) VALUES ('${req.params.userName}', '${req.params.password}');`;
+        let sql = `INSERT INTO users (userName, password) VALUES (` + mysql.escape(`${req.params.userName}`) + `, ` + mysql.escape(`${req.params.password}`) + `);`;
         let query = db.query(sql, (err, result) =>{
 
             if(err) throw err;
@@ -112,7 +90,7 @@ app.get('/addUserInfo', (req, res) => {
     
     app.post('/login/:userName/:password', (req, res) => {
 
-        let sql = `SELECT user_id FROM users WHERE userName='${req.params.userName}' AND password='${req.params.password}';`;
+        let sql = `SELECT user_id FROM users WHERE userName= ` + mysql.escape(`${req.params.userName}`) + ` AND password= ` + mysql.escape(`${req.params.password}`) + `;`;
         let query = db.query(sql, (err, result) =>{
     
             if(err) throw err;
@@ -125,7 +103,11 @@ app.get('/addUserInfo', (req, res) => {
 
     app.post('/addBlogPost/:user_id/:postTitle/:postBody/:username', (req, res) => {
 
-        let sql = `INSERT INTO forumposts (post_title, post_body, post_likes, post_dislikes, post_replies, user_id, username) VALUES ('${req.params.postTitle}', '${req.params.postBody}', 0, 0, 0, ${req.params.user_id}, '${req.params.username}');`;
+        let sql = `INSERT INTO forumposts (post_title, post_body, post_likes, post_dislikes, post_replies, user_id, username) VALUES (` 
+        + mysql.escape(`${req.params.postTitle}`) + `, ` + mysql.escape(`${req.params.postBody}`) + `, 0, 0, 0, ` + mysql.escape(`${req.params.user_id}`) + 
+        `, ` + mysql.escape(`${req.params.username}`) `);`;
+
+
         let query = db.query(sql, (err, result) =>{
 
             if(err) throw err;
@@ -272,6 +254,252 @@ app.get('/addUserInfo', (req, res) => {
 
 
 
+    app.get('/getSingleBlogPost/:post_id', (req, res) => {
+
+        
+        let sql = `SELECT * FROM forumposts WHERE post_id = ${req.params.post_id}`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+
+    app.post('/addReply/:user_id/:replyTitle/:replyBody/:username/:post_id', (req, res) => {
+
+        let sql = `INSERT INTO forum_replies (reply_title, reply_body, user_id, username, original_post_id) VALUES (` 
+        + mysql.escape(`${req.params.replyTitle}`) + `, ` + mysql.escape(`${req.params.replyBody}`) + `, ` + mysql.escape(`${req.params.user_id}`) + 
+        `, ` + mysql.escape(`${req.params.username}`) + `, ` + mysql.escape(`${req.params.post_id}`) + `);`;
+
+
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+    app.post('/updateReplies/:post_id/:num_replies', (req, res) => {
+
+        let sql = `UPDATE forumposts SET post_replies = ${req.params.num_replies} WHERE post_id = ${req.params.post_id};`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+
+    app.get('/getAllReplies/:post_id', (req, res) => {
+
+        
+        let sql = `SELECT * FROM forum_replies WHERE original_post_id = ${req.params.post_id}`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+
+    app.post('/submitQuoteBlueCross/:prescriptionDrugs/:dental/:studentAccident/:VIPtravel/:hospitalCash/:criticalIllness/:termLifeInsurance/:totalQuote', (req, res) => {
+
+        let sql = `INSERT INTO user_quotes_blue_cross (prescription_drugs, dental, student_accident, vip_travel, hospital_cash, critical_illness, term_life_insurance, total_quote) VALUES 
+        (${req.params.prescriptionDrugs}, ${req.params.dental}, ${req.params.studentAccident}, ${req.params.VIPtravel}, ${req.params.hospitalCash}, ${req.params.criticalIllness}, 
+            ${req.params.termLifeInsurance}, ${req.params.totalQuote});`;
+
+
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+    app.post('/submitQuoteSunlife/:prescriptionDrugs/:dental/:studentAccident/:VIPtravel/:hospitalCash/:criticalIllness/:termLifeInsurance/:totalQuote', (req, res) => {
+
+        let sql = `INSERT INTO user_quotes_sunlife (prescription_drugs, dental, student_accident, vip_travel, hospital_cash, critical_illness, term_life_insurance, total_quote) VALUES 
+        (${req.params.prescriptionDrugs}, ${req.params.dental}, ${req.params.studentAccident}, ${req.params.VIPtravel}, ${req.params.hospitalCash}, ${req.params.criticalIllness}, 
+            ${req.params.termLifeInsurance}, ${req.params.totalQuote});`;
+
+
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+    app.post('/submitQuoteCAA/:prescriptionDrugs/:dental/:studentAccident/:VIPtravel/:hospitalCash/:criticalIllness/:termLifeInsurance/:totalQuote', (req, res) => {
+
+        let sql = `INSERT INTO user_quotes_caa (prescription_drugs, dental, student_accident, vip_travel, hospital_cash, critical_illness, term_life_insurance, total_quote) VALUES 
+        (${req.params.prescriptionDrugs}, ${req.params.dental}, ${req.params.studentAccident}, ${req.params.VIPtravel}, ${req.params.hospitalCash}, ${req.params.criticalIllness}, 
+            ${req.params.termLifeInsurance}, ${req.params.totalQuote});`;
+
+
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+    app.post('/submitQuoteSureHealth/:prescriptionDrugs/:dental/:studentAccident/:VIPtravel/:hospitalCash/:criticalIllness/:termLifeInsurance/:totalQuote', (req, res) => {
+
+        let sql = `INSERT INTO user_quotes_sure_health (prescription_drugs, dental, student_accident, vip_travel, hospital_cash, critical_illness, term_life_insurance, total_quote) VALUES 
+        (${req.params.prescriptionDrugs}, ${req.params.dental}, ${req.params.studentAccident}, ${req.params.VIPtravel}, ${req.params.hospitalCash}, ${req.params.criticalIllness}, 
+            ${req.params.termLifeInsurance}, ${req.params.totalQuote});`;
+
+            
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+
+    });
+
+
+    app.get('/getUserQuotesBlueCross', (req, res) => {
+
+        
+        let sql = `SELECT * FROM user_quotes_blue_cross`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+    app.get('/getUserQuotesSunlife', (req, res) => {
+
+        
+        let sql = `SELECT * FROM user_quotes_sunlife`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+    app.get('/getUserQuotesCAA', (req, res) => {
+
+        
+        let sql = `SELECT * FROM user_quotes_caa`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+    app.get('/getUserQuotesSureHealth', (req, res) => {
+
+        
+        let sql = `SELECT * FROM user_quotes_sure_health`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+    app.get('/getUserQuotesBlueCrossCount', (req, res) => {
+
+        
+        let sql = 'SELECT COUNT(quote_id) AS countValue FROM user_quotes_blue_cross;';
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+
+    app.get('/getUserQuotesSunlifeCount', (req, res) => {
+
+        
+        let sql = `SELECT COUNT(quote_id) AS countValue FROM user_quotes_sunlife`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+
+    app.get('/getUserQuotesCAACount', (req, res) => {
+
+        
+        let sql = `SELECT COUNT(quote_id) AS countValue FROM user_quotes_caa`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
+
+    app.get('/getUserQuotesSureHealthCount', (req, res) => {
+
+        
+        let sql = `SELECT COUNT(quote_id) AS countValue FROM user_quotes_sure_health`;
+        let query = db.query(sql, (err, result) =>{
+
+            if(err) throw err;
+            console.log(result);
+            res.json(result);
+            res.status(200);
+        });
+    
+    });
 
 
 app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
