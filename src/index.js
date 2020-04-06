@@ -105,7 +105,7 @@ app.get('/', (req, res) => {
 
         let sql = `INSERT INTO forumposts (post_title, post_body, post_likes, post_dislikes, post_replies, user_id, username) VALUES (` 
         + mysql.escape(`${req.params.postTitle}`) + `, ` + mysql.escape(`${req.params.postBody}`) + `, 0, 0, 0, ` + mysql.escape(`${req.params.user_id}`) + 
-        `, ` + mysql.escape(`${req.params.username}`) `);`;
+        `, ` + mysql.escape(`${req.params.username}`) + `);`;
 
 
         let query = db.query(sql, (err, result) =>{
@@ -375,7 +375,7 @@ app.get('/', (req, res) => {
         (${req.params.prescriptionDrugs}, ${req.params.dental}, ${req.params.studentAccident}, ${req.params.VIPtravel}, ${req.params.hospitalCash}, ${req.params.criticalIllness}, 
             ${req.params.termLifeInsurance}, ${req.params.totalQuote});`;
 
-            
+
         let query = db.query(sql, (err, result) =>{
 
             if(err) throw err;
